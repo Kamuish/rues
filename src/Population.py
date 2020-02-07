@@ -14,7 +14,8 @@ class Population():
             Dictionary with the upper and lower value of the model parameters
         """
 
-        self._population = [Individual() for _ in range(pop_size)]
+        self.generation = 0
+        self._population = [Individual(param_limits, first_gen=True) for _ in range(pop_size)]
 
     def get_population(self):
         return self._population
@@ -31,7 +32,19 @@ class Population():
         Perform the crossover between the fittest elements
         """
         pass 
+        self.generation += 1
 
-a = Population(5, {})
+    def print_current_gen(self):
+        """
+        Print all of the individuals of the current generation
+        """
+        output_string = f"============= Gen: {self.generation} ================\n"
 
-print(a.get_population())
+        for element in self._population:
+            output_string += str(element) + "\n"
+        return output_string
+
+
+a = Population(5, {'a':[0,1]})
+
+print(a.print_current_gen())
