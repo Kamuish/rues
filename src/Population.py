@@ -15,23 +15,33 @@ class Population():
         """
 
         self.generation = 0
-        self._population = [Individual(param_limits, first_gen=True) for _ in range(pop_size)]
+        self._population = [Individual(self.generation, param_limits, first_gen=True) for _ in range(pop_size)]
 
     def get_population(self):
         return self._population
+
 
     def _run_fitness_computation(self):
         """
         Computes the score of each individual, to prepare for next generation
         """
-        
         return []
 
-    def crossover(self):
+
+    def crossover(self, fitness_func, parent_model='roulette'):
         """
         Perform the crossover between the fittest elements
+
+        Parameters
+        -----------
+
+        fitness_func:
+            function to calculate the score of each element
+        parent_model: str
+            Model in use to find the individuals that will be selected
         """
         pass 
+
         self.generation += 1
 
     def print_current_gen(self):
@@ -45,6 +55,7 @@ class Population():
         return output_string
 
 
-a = Population(5, {'a':[0,1]})
+if __name__ == '__main__':
+    a = Population(5, {'a':[0,1]})
 
-print(a.print_current_gen())
+    print(a.print_current_gen())
