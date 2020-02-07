@@ -5,7 +5,7 @@ import numpy as np
 class Individual():
     pop_tracker = 0
 
-    def __init__(self, param_values, first_gen = False, mutate_prob = 0.1):
+    def __init__(self, param_values, gen_date, first_gen = False, mutate_prob = 0.1):
         """
             Individual class, part of the species that will fit our problem
 
@@ -22,7 +22,7 @@ class Individual():
             mutate_prob: float 
                 Probability of having mutations
         """
-
+        self._generation_creation = gen_date
         self.ID = self.__class__.pop_tracker
         self.__class__.pop_tracker += 1
         self._param_vector = {}
@@ -48,7 +48,9 @@ class Individual():
     def __str__(self):
         return self.__repr__()
     def __repr__(self):
-        return f"ID: {self.ID} {self._param_vector}" 
+        output_str = f"ID: {self.ID} {self._param_vector}"
+        added_info = '' if self._score is None else f" - {self._score}" 
+        return output_str + added_info
 
 
 if __name__ == '__main__':
@@ -57,4 +59,4 @@ if __name__ == '__main__':
     print(a)
 
     a.score = 10
-    print(a.score)
+    print(a)
