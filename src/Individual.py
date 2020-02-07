@@ -28,6 +28,7 @@ class Individual():
         self._param_vector = {}
         self._mutate_prob = 0.1
 
+        self._score = None
 
         # create Individual with parameters random within the region space
         if first_gen:
@@ -35,6 +36,14 @@ class Individual():
                 self._param_vector[key] = np.random.uniform(*value, size = 1)[0]
         else:
             self._param_vector = param_values
+
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, new_score):
+        self._score = new_score
 
     def __str__(self):
         return self.__repr__()
@@ -46,3 +55,6 @@ if __name__ == '__main__':
     a = Individual({'a':[0,2]}
     )
     print(a)
+
+    a.score = 10
+    print(a.score)
