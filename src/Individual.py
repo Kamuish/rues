@@ -27,6 +27,8 @@ class Individual():
         self.__class__.pop_tracker += 1
         self._param_vector = {}
         self._mutate_prob = 0.1
+
+
         # create Individual with parameters random within the region space
         if first_gen:
             for key, value in param_values.items():
@@ -34,6 +36,8 @@ class Individual():
         else:
             self._param_vector = param_values
 
+    def __str__(self):
+        return self.__repr__()
     def __repr__(self):
         return f"ID: {self.ID} {self._param_vector}" 
 
