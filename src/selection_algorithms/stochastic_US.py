@@ -1,12 +1,8 @@
 
 import numpy as np 
-import random
+from .create_random_pairs import create_rand_pairs
 
-def pop_random(lst):
-    idx = random.randrange(0, len(lst))
-    return lst.pop(idx)
-
-def stochastic_uni_sampling(population, offspring_number):
+def stochastic_uni_sampling(population, offspring_number, **kwargs):
     """
         TODO: the iteration through the pointer list can be done more efficiently
         There is no need to start from the beginning of the population for each pointer
@@ -30,9 +26,5 @@ def stochastic_uni_sampling(population, offspring_number):
                 individual.parent = True 
                 break  # avoid parsing through the list after finding the parent
     
-    # create random pairs out of the chosen elements
-    chosen_pairs = []
-    for k in range(offspring_number): # list will always have an even number of elements
-        chosen_pairs.append([pop_random(chosen_elements), pop_random(chosen_elements)])
-    
-    return chosen_pairs
+
+    return create_rand_pairs(chosen_elements)
