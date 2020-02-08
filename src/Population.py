@@ -20,7 +20,7 @@ class Population():
     def get_population(self):
         return self._population
 
-
+        
     def _run_fitness_computation(self):
         """
         Computes the score of each individual, to prepare for next generation
