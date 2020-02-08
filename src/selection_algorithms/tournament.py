@@ -6,7 +6,7 @@ def tournament_selection(population, offspring_number, **kwargs):
 
     selected_elements = []
 
-    for numb in range(2*offspring_number):
+    for numb in range(offspring_number):
         chosen_elements = np.random.choice(population, tournament_size)
         fits = [i.score for i in chosen_elements]
         selected_elements.append(chosen_elements[fits.index(max(fits))])

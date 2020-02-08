@@ -11,9 +11,9 @@ def stochastic_uni_sampling(population, offspring_number, **kwargs):
     fitness_sum = np.sum([ind.score for ind in population])
 
     # create pointer array to sample population
-    pointer_distance = fitness_sum / (2 * offspring_number)
+    pointer_distance = fitness_sum / (offspring_number)
     start = np.random.uniform(0, pointer_distance, size = 1)[0]
-    pointers = [start + pointer_distance*i for i in range(offspring_number*2 )]
+    pointers = [start + pointer_distance*i for i in range(offspring_number )]
 
     chosen_elements = []
     for p in pointers:

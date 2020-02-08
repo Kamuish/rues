@@ -9,7 +9,7 @@ def roulette_wheel(population, offspring_number, **kwargs):
 
     fitness_sum = np.sum([ind.score for ind in population])
     chosen_elemts = []
-    for k in range(2*offspring_number):
+    for k in range(offspring_number):
         random_number = np.random.uniform(0,fitness_sum, size=1)[0]
         partial_sum = 0
         found_two_parents = False 
@@ -24,7 +24,7 @@ def roulette_wheel(population, offspring_number, **kwargs):
                     chosen_elemts.append(individ.ID)
                     found_two_parents = True
                 break
-            
+
     return create_rand_pairs(chosen_elements)
 
 
