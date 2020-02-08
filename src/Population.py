@@ -28,7 +28,7 @@ class Population():
         return []
 
 
-    def crossover(self, fitness_func, parent_model='roulette'):
+    def crossover(self, fitness_func, parent_model='roulette', **kwargs):
         """
         Perform the crossover between the fittest elements
 
@@ -38,9 +38,11 @@ class Population():
         fitness_func:
             function to calculate the score of each element
         parent_model: str
-            Model in use to find the individuals that will be selected
+            Model in use to find the individuals that will be selected:
+                roulette: roulette wheel selection 
+                tournament: tournament selection
+                uni_sample: stochastic universal sampling
         """
-        pass 
 
         self.generation += 1
 
