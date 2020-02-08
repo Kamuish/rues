@@ -28,6 +28,8 @@ class Individual():
         self._param_vector = {}
         self._mutate_prob = 0.1
 
+        # if True then it will be used as one of the parents
+        self.parent = False   
         self._score = None
 
         # create Individual with parameters random within the region space
