@@ -15,19 +15,17 @@ def worker(in_queue, out_queue, **kwargs):
         initial_configuration = kwargs['initial_setup']
         configuration_init = initial_configuration(**kwargs)
     except KeyError as e:
-        initial_configuration = None 
+        configuration_init = None 
 
+    print(kwargs)
     fitness_function = kwargs['fit_func']
 
     calculated_fitness = {}
 
     while True:
-        try:
+        if not in_queue.empty():
             population = in_queue.get(timeout=1)
-        except Queue.Empty:
-            return
-        except Exception as e:
-            print("Oh, another error: ", e)
+        else:
             return 
 
         for individual in population:
@@ -35,7 +33,7 @@ def worker(in_queue, out_queue, **kwargs):
             parameters = individual.parameters
             fit_level = fitness_function(parameters = parameters,
                                         initial_config = configuration_init,
-                                        **initial_configuration)
+                                        **kwargs)
             calculated_fitness[ID] = fit_level
             
         out_queue.put(calculated_fitness)
