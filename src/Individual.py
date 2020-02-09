@@ -5,7 +5,7 @@ import numpy as np
 class Individual():
     pop_tracker = 0
 
-    def __init__(self, param_values, gen_date, first_gen = False, mutate_prob = 0.1):
+    def __init__(self, param_values, gen_date, mutate_prob = 0.1):
         """
             Individual class, part of the species that will fit our problem
 
@@ -33,7 +33,7 @@ class Individual():
         self._score = None
 
         # create Individual with parameters random within the region space
-        if first_gen:
+        if gen_date == 0:
             for key, value in param_values.items():
                 self._param_vector[key] = np.random.uniform(*value, size = 1)[0]
         else:
