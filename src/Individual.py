@@ -43,6 +43,9 @@ class Individual():
     def score(self):
         return self._score
 
+    @property
+    def parameters(self):
+        return self._param_vector
     @score.setter
     def score(self, new_score):
         self._score = new_score
