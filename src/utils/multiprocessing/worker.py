@@ -11,19 +11,18 @@ def worker(in_queue, out_queue, **kwargs):
 
     """
 
-    try:
+    try:  # allow to run a function before the 'fit_func' starts being used over all of the individuals of the population
         initial_configuration = kwargs['initial_setup']
         configuration_init = initial_configuration(**kwargs)
     except KeyError as e:
         configuration_init = None 
 
-    print(kwargs)
     fitness_function = kwargs['fit_func']
 
-    calculated_fitness = {}
+    calculated_fitness = {}   # dictionary to store fitness values; keys -> ID of the individual; values -> fit level
 
     while True:
-        if not in_queue.empty():
+        if not in_queue.empty():  # still have elements in the input queue
             population = in_queue.get(timeout=1)
         else:
             return 
@@ -31,6 +30,7 @@ def worker(in_queue, out_queue, **kwargs):
         for individual in population:
             ID = individual.ID
             parameters = individual.parameters
+
             fit_level = fitness_function(parameters = parameters,
                                         initial_config = configuration_init,
                                         **kwargs)
