@@ -17,16 +17,15 @@ class Population():
         self.generation = 0
         self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
+        self._parameters_to_fit = param_limits.keys()
     def get_population(self):
         return self._population
-
-        
+      
     def _run_fitness_computation(self):
         """
         Computes the score of each individual, to prepare for next generation
         """
         return []
-
 
     def crossover(self, fitness_func, parent_model='roulette', **kwargs):
         """
@@ -70,8 +69,24 @@ class Population():
         except IndexError:
             raise IndexError("Trying to access individual with an ID that does not exist")
 
+    def get_population_parameters(self):
+        """
+        Get the value, for each parameter, for each individual in the population
+
+        Returns
+        ----------
+        Dictionary where the keys are the parameter's names and the values are lists, with the value of each element in the population
+        """
+        parameter_dict = {i : [] for i in self._parameters_to_fit}
+
+        for individ in self._population:
+            for param in self._parameters_to_fit:
+                parameter_dict[param].append(individ.parameters[param])
+        return parameter_dict
+
 
 if __name__ == '__main__':
-    a = Population(5, param_limits = {'a':[0,1]})
+    a = Population(5, param_limits = {'a':[0,1], 'b':[2,3]})
 
-    print(a.get_individual_by_ID(6))
+
+    print(a.get_population_parameters())
