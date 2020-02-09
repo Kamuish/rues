@@ -15,7 +15,7 @@ def multiproc_handler(population, **kwargs):
     [tasks_queue.put(i) for i in blocks]  # populate the task queue with all of the blocks
 
     for k in range(kwargs['processes']):
-        process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=**kwargs)
+        process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=kwargs)
         process.start()
         
     number_responses = 0
@@ -24,6 +24,6 @@ def multiproc_handler(population, **kwargs):
     while number_responses != number_blocks:
         output = results_queue.get() 
         outputs_complete = {**outputs_complete, **output}
-
+        number_responses += 1
     return outputs_complete
-multiproc_handler([1,2,3,4,5],** {'processes':3})
+
