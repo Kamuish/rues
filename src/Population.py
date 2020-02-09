@@ -15,7 +15,7 @@ class Population():
         """
 
         self.generation = 0
-        self._population = [Individual(self.generation, param_limits, first_gen=True) for _ in range(pop_size)]
+        self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
     def get_population(self):
         return self._population
@@ -56,8 +56,22 @@ class Population():
             output_string += str(element) + "\n"
         return output_string
 
+    def get_individual_by_ID(self, ID):
+        """
+            Return an Individual with the given ID
+
+        Parameters
+        --------------
+        ID: int
+            ID of the individual
+        """
+        try:
+            return [i for i in self._population if i.ID == ID][0]
+        except IndexError:
+            raise IndexError("Trying to access individual with an ID that does not exist")
+
 
 if __name__ == '__main__':
-    a = Population(5, {'a':[0,1]})
+    a = Population(5, param_limits = {'a':[0,1]})
 
-    print(a.print_current_gen())
+    print(a.get_individual_by_ID(6))
