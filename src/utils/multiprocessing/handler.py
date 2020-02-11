@@ -5,27 +5,65 @@ from multiprocessing import Process
 from .worker import worker
 
 
-def multiproc_handler(population, **kwargs):
+class multiproc_handler():
+    def __init__(self, keep_alive, **kwargs):
+        self.keep_alive = keep_alive 
+        self.nproc = kwargs['processes'] 
+
+        self.tasks_queue = None
+        self.results_queue = None
+
+        kwargs['keep_alive'] = keep_alive
+        self.configurations = kwargs
+        self.processes  = [] 
+
+    def run_population(self, population):
+        """
+        runs the fitness function over the input population. If the workers are set to be kept alive, then the background processes will be alive 
+        until the code ends
+
+        """
+        kwargs = self.configurations
+        blocks = np.array_split(population, kwargs['processes'])
+        number_blocks = len(blocks)
+
+        if self.keep_alive:
+            if self.tasks_queue is None:  # create the always alive queues
+                self.tasks_queue = Queue()
+                self.results_queue = Queue()
+                
+            tasks_queue  = self.tasks_queue
+            results_queue = self.results_queue 
+        else:
+            tasks_queue  = Queue() 
+            results_queue = Queue()
+
+        [tasks_queue.put(i) for i in blocks]  # populate the task queue with all of the blocks
+
+        if not self.keep_alive or len(self.processes) == 0:  # either always creates the processes (if not keep_alive) or creates them for the first time
+            for k in range(kwargs['processes']): # create all of the processes
+                process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=kwargs)
+                process.start()
+
+                if self.keep_alive:
+                    self.processes.append(process)
+                
+        number_responses = 0
+        outputs_complete = {}
+        while number_responses != number_blocks:  # wait until all of the workers put all of the information in their output queue
+            output = results_queue.get()   # blocking call
+            outputs_complete = {**outputs_complete, **output} # merging to final dict
+            number_responses += 1
+
+        return outputs_complete
     
-    blocks = np.array_split(population, kwargs['processes'])
-    number_blocks = len(blocks)
-    tasks_queue  = Queue() 
-    results_queue = Queue()
+    def close(self):
+        self.__del__()
 
-    [tasks_queue.put(i) for i in blocks]  # populate the task queue with all of the blocks
+    def __del__(self):
+        if self.keep_alive:
+            self.tasks_queue.close()
+            self.results_queue.close()
 
-    for k in range(kwargs['processes']): # create all of the processes
-        process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=kwargs)
-        process.start()
-        
-    number_responses = 0
-    
-    outputs_complete = {}
-    while number_responses != number_blocks:  # wait until all of the workers put all of the information in their output queue
-        output = results_queue.get()   # blocking call
-        outputs_complete = {**outputs_complete, **output}
-        number_responses += 1
-
-
-    return outputs_complete
+            [proc.terminate() for proc in self.processes]
 
