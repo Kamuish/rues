@@ -1,8 +1,12 @@
 from Individual import Individual
+from src.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
+from src.crossover_algorithms import k_point_crossover 
+from src.mutation_algorithms import uniform_mutator
+
 import numpy as np
 
 class Population():
-    def __init__(self, pop_size, param_limits):
+    def __init__(self, pop_size, param_limits, offspring_ratio=0.5):
         """
 
         Parameters
@@ -14,36 +18,84 @@ class Population():
             Dictionary with the upper and lower value of the model parameters
         """
 
+        if offspring_ratio != 0.5 and offspring_ratio != 1:
+            raise ValueError("Currently we either support half-population crossover or full-population crossover")
+
         self.generation = 0
         self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
+        self.number_offsprings = int(pop_size * offspring_ratio) # each set of 2 parents creates 2 childs
         self._parameters_to_fit = param_limits.keys()
+
+
+        # Different possibilities for selection, crossover and mutation algorithms to be used
+        self._selection_mapping = { 
+                            'roulette': roulette_wheel
+                            'tournament': tournament_selection
+                            'universal_sampling': stochastic_uni_sampling
+        }
+
+        self._mutation_mapping = {
+                        'uniform': uniform_mutator
+        }
+
+        self._crossover_mapping = {
+                'K_point': k_point_crossover
+        }
+
+
     def get_population(self):
         return self._population
       
-    def _run_fitness_computation(self):
+    def _run_fitness_computation(self, fitness_func):
         """
         Computes the score of each individual, to prepare for next generation
+
+        Parameters
+        ----------------
+        fitness_func:
+            function to calculate the score of each element
+
         """
         return []
 
-    def crossover(self, fitness_func, parent_model='roulette', **kwargs):
+    def crossover(self, **kwargs):
         """
-        Perform the crossover between the fittest elements
+        Perform the crossover between the fittest elements. IN order to facilitate the configuration of this function,
+        everything is passed through the kwargs.
 
-        Parameters
-        -----------
+        In it, we need the following parameters:
 
-        fitness_func:
-            function to calculate the score of each element
-        parent_model: str
-            Model in use to find the individuals that will be selected:
-                roulette: roulette wheel selection 
-                tournament: tournament selection
-                uni_sample: stochastic universal sampling
+            selection_type: str
+                Model in use to find the individuals that will be selected:
+                    roulette: roulette wheel selection 
+                    tournament: tournament selection
+                    uni_sample: stochastic universal sampling
+            crossover_type: str
+                ALgorithm to perform the crossover:
+                    K_point: K point crossover algorithm. If one chooses this algorithm, also set the K_value to the desired number of switching points
         """
-
         self.generation += 1
+
+        selection_type = kwargs['selection_type']
+        crossover =  kwargs['crossover_type']
+        mutation = kwargs['mutation_type']
+
+
+        selected_pairs = self._selection_mapping[selection_type](population = self._population,
+                                                                offspring_number = self.number_offsprings
+                                                                **kwargs
+                                                                )
+        new_generation = list(zip(*selected_pairs))
+
+        # take intoaccount that we can select less parents, and then have to choose to keep some elements that are not parents (why would we do this?)
+        # For now ignore this problem and only accept half/full population crossover
+        for parent_pair in selected_pairs: 
+            children_1, children_2 = self._crossover_mapping[crossover](parent_list = parent_pair, 
+                                                                        **kwargs)
+
+            new_generation.append(children_1)
+            new_generation.append(children_2)
 
     def print_current_gen(self):
         """
