@@ -40,7 +40,10 @@ class Individual():
             self._param_vector = param_values
 
     def mutate_genes(self, new_params):
+        if type(new_params) is not dict:
+            raise ValueError("New vector has the wrogn type")
         self._param_vector = new_params
+
     @property
     def score(self):
         return self._score
