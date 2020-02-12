@@ -39,6 +39,8 @@ class Individual():
         else:
             self._param_vector = param_values
 
+    def mutate_genes(self, new_params):
+        self._param_vector = new_params
     @property
     def score(self):
         return self._score
@@ -46,12 +48,14 @@ class Individual():
     @property
     def parameters(self):
         return self._param_vector
+
     @score.setter
     def score(self, new_score):
         self._score = new_score
 
     def __str__(self):
         return self.__repr__()
+
     def __repr__(self):
         output_str = f"ID: {self.ID} {self._param_vector}"
         added_info = '' if self._score is None else f" - {self._score}" 
