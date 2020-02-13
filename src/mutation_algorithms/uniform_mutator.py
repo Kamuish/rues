@@ -19,4 +19,4 @@ def uniform_mutator(individual, value_ranges):
             print(f"{key} going to mutate")
             child_params[key] = np.random.uniform(*value_ranges[key], size = 1)[0]
 
-    individual.mutate_genes(child_params)
+    return child_params
