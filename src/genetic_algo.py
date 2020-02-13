@@ -32,9 +32,11 @@ class Genetic():
         """
         Run the genetic algorithm to find the best parameters for the orbit
         """
-
         for k in range(max_iterations):
-            self._population.crossover(**self._config_dict)
+            self._population.crossover(X, Y, **self._config_dict)
+
+            if k % 100 == 0:
+                print(f"Here we are: {k}")
         self._completed_fit = True 
 
 
@@ -58,7 +60,9 @@ class Genetic():
         output = {}
 
         for parameter, values in param_dict.items():
-            percentiles = np.sqrt(np.nanpercentile(values, [16, 50, 84]))
+            percentiles = np.percentile(values, [25, 50, 75])
+
+            print(percentiles[0], percentiles[2])
             output[parameter] =  (percentiles[1], percentiles[1] - percentiles[0], percentiles[2] - percentiles[1] )
 
         return output
