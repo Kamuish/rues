@@ -1,9 +1,10 @@
-from Individual import Individual
+from src.Individual import Individual
 from src.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
 from src.crossover_algorithms import k_point_crossover 
 from src.mutation_algorithms import uniform_mutator
 from src.reinsertion_algorithms import age_based_selection, fittest_individuals
 from src.utils import multiproc_handler
+
 import numpy as np
 
 class Population():
@@ -21,8 +22,8 @@ class Population():
 
          # Different possibilities for selection, crossover and mutation algorithms to be used
         self._selection_mapping = { 
-                            'roulette': roulette_wheel
-                            'tournament': tournament_selection
+                            'roulette': roulette_wheel,
+                            'tournament': tournament_selection,
                             'universal_sampling': stochastic_uni_sampling
         }
 
@@ -45,7 +46,7 @@ class Population():
         self._parameters_to_fit = param_limits.keys()
 
         self._process_handler = multiproc_handler(**kwargs)
-       
+        
     def get_population(self):
         return self._population
       
@@ -67,6 +68,7 @@ class Population():
                     K_point: K point crossover algorithm. If one chooses this algorithm, also set the K_value to the desired number of switching points
             mutation_type
                 Algorithm for the mutation 
+                    uniform
             reinsertion_type:
                 Algorithm for reinsertion 
                     - age
@@ -79,7 +81,7 @@ class Population():
         """
 
         if self.generation == 0:  # set the configuration arguments for the initial setup and fitness functions
-            self._process_handler.set_configuration(**kwargs['worker_params'])
+            self._process_handler.set_configuration(kwargs['worker_params'])
         self.generation += 1
 
         selection_type = kwargs['selection_type']
@@ -88,9 +90,11 @@ class Population():
 
         self._process_handler.run_population(self._population) # compute the fitness of current 
         
+        print(self._population)
+        input()
         # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
-                                                                offspring_number = self.number_offsprings
+                                                                offspring_number = self.number_offsprings,
                                                                 **kwargs
                                                                 )
 
@@ -101,7 +105,7 @@ class Population():
                 new_gen = fittest_individuals(self._population, number_to_keep)
             else:
                 new_gen = age_based_selection(self._population, number_to_keep)
-        elif kwargs['reinsertion_type'] == 'fit';
+        elif kwargs['reinsertion_type'] == 'fit':
             new_gen = fittest_individuals(self._population, number_to_keep)
 
 
