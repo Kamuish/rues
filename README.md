@@ -2,7 +2,7 @@
 
 ## What is it ?
 
-rues is a pure python concurrent implementation of real valued genetic algorithms. 
+rues is a pure python concurrent implementation of real valued genetic algorithms (to be more precise, the fitness evaluation of each individual is concurrent). 
 
 The modular interface easily allows the users to easily implement custom crossover, selection, mutation and reinsertion routines. Furthermore, the concurrency handler interface allows a
 user to (if applicable) to initialiase a part of the fitness evaluation function before the score of the individuals is calculated
