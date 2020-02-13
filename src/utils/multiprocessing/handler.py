@@ -6,25 +6,22 @@ from .worker import worker
 
 
 class multiproc_handler():
-    def __init__(self, keep_alive, **kwargs):
-        self.keep_alive = keep_alive 
+    def __init__(self, **kwargs):
+        self.keep_alive = kwargs['keep_alive'] 
         self.nproc = kwargs['processes'] 
 
         self.tasks_queue = None
         self.results_queue = None
 
-        kwargs['keep_alive'] = keep_alive
-        self.configurations = kwargs
         self.processes  = [] 
 
-    def run_population(self, population):
+    def run_population(self, population, **kwargs):
         """
         runs the fitness function over the input population. If the workers are set to be kept alive, then the background processes will be alive 
         until the code ends
 
         """
-        kwargs = self.configurations
-        blocks = np.array_split(population, kwargs['processes'])
+        blocks = np.array_split(population, self.nproc)
         number_blocks = len(blocks)
 
         if self.keep_alive:
@@ -41,7 +38,7 @@ class multiproc_handler():
         [tasks_queue.put(i) for i in blocks]  # populate the task queue with all of the blocks
 
         if not self.keep_alive or len(self.processes) == 0:  # either always creates the processes (if not keep_alive) or creates them for the first time
-            for k in range(kwargs['processes']): # create all of the processes
+            for k in range(self.nproc): # create all of the processes
                 process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=kwargs)
                 process.start()
 
