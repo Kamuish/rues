@@ -1,5 +1,5 @@
 
-from src.utils import sorted_population
+from rails.utils import sorted_population
 
 
 def fittest_individuals(population, to_keep):

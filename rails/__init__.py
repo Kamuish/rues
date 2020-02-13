@@ -1,2 +1,2 @@
 
-from src.genetic_algo import Genetic
+from rails.genetic_algo import Genetic
