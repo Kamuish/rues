@@ -1,6 +1,6 @@
 from src.Individual import Individual
 from src.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
-from src.crossover_algorithms import k_point_crossover 
+from src.crossover_algorithms import k_point_crossover, blend_crossover
 from src.mutation_algorithms import uniform_mutator
 from src.reinsertion_algorithms import age_based_selection, fittest_individuals
 from src.utils import multiproc_handler
@@ -32,7 +32,8 @@ class Population():
         }
 
         self._crossover_mapping = {
-                'K_point': k_point_crossover
+                'K_point': k_point_crossover,
+                'blend': blend_crossover
         }
 
 
@@ -43,6 +44,7 @@ class Population():
         self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
         self.number_offsprings = int(pop_size * kwargs['offspring_ratio']) # each set of 2 parents creates 2 childs
+
         self._parameters_to_fit = param_limits.keys()
 
         self._process_handler = multiproc_handler(**kwargs)
@@ -51,7 +53,7 @@ class Population():
         return self._population
       
 
-    def crossover(self, **kwargs):
+    def crossover(self, X, Y, **kwargs):
         """
         Perform the crossover between the fittest elements. IN order to facilitate the configuration of this function,
         everything is passed through the kwargs.
@@ -82,14 +84,17 @@ class Population():
 
         if self.generation == 0:  # set the configuration arguments for the initial setup and fitness functions
             self._process_handler.set_configuration(kwargs['worker_params'])
-        self.generation += 1
+            
+            if kwargs['crossover_type'] == 'blend': # blend crossover only gives one child from two parents (half of the 'normal') algorithm
+                self.number_offsprings *= 2
 
+        self.generation += 1
         selection_type = kwargs['selection_type']
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
 
-        self._process_handler.run_population(self._population) # compute the fitness of current 
-        
+        self._process_handler.run_population(self._population, X, Y) # compute the fitness of current 
+
         # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings,
@@ -98,15 +103,18 @@ class Population():
 
         # Select the members to maintain to next generation and find individuals to be reinserted
         number_to_keep = self._pop_size - self.number_offsprings
-        if kwargs['reinsertion_type'] == 'age':
-            if self.generation == 1:
+
+        if number_to_keep != 0:
+            if kwargs['reinsertion_type'] == 'age':
+                if self.generation == 1:
+                    new_gen = fittest_individuals(self._population, number_to_keep)
+                else:
+                    new_gen = age_based_selection(self._population, number_to_keep)
+
+            elif kwargs['reinsertion_type'] == 'fit':
                 new_gen = fittest_individuals(self._population, number_to_keep)
-            else:
-                new_gen = age_based_selection(self._population, number_to_keep)
-
-        elif kwargs['reinsertion_type'] == 'fit':
-            new_gen = fittest_individuals(self._population, number_to_keep)
-
+        else:
+            new_gen = []
 
 
         # create the offspring and see if they will mutate
