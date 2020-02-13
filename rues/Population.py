@@ -1,9 +1,9 @@
-from rails.Individual import Individual
-from rails.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
-from rails.crossover_algorithms import k_point_crossover, blend_crossover
-from rails.mutation_algorithms import uniform_mutator
-from rails.reinsertion_algorithms import age_based_selection, fittest_individuals
-from rails.utils import multiproc_handler
+from rues.Individual import Individual
+from rues.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
+from rues.crossover_algorithms import k_point_crossover, blend_crossover
+from rues.mutation_algorithms import uniform_mutator
+from rues.reinsertion_algorithms import age_based_selection, fittest_individuals
+from rues.utils import multiproc_handler
 
 import numpy as np
 

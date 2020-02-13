@@ -4,7 +4,7 @@
 
 # page 21
 
-from rails.utils import sorted_population
+from rues.utils import sorted_population
 
 def age_based_selection(population, to_keep):
     """

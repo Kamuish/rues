@@ -1,5 +1,5 @@
 
-from rails.Individual import Individual
+from rues.Individual import Individual
 import numpy as np 
 
 
