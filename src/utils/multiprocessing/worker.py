@@ -22,7 +22,7 @@ def worker(in_queue, out_queue, keep_alive, **kwargs):
     calculated_fitness = {}   # dictionary to store fitness values; keys -> ID of the individual; values -> fit level
 
     while True:
-        if not in_queue.empty() or keep_alive  # still have elements in the input queue or worker is supposed to stya alive  
+        if not in_queue.empty() or keep_alive:  # still have elements in the input queue or worker is supposed to stya alive  
             population = in_queue.get()
         else:
             return 
