@@ -7,7 +7,7 @@ from src.reinsertion_algorithms import age_based_selection, fittest_individuals
 import numpy as np
 
 class Population():
-    def __init__(self, pop_size, param_limits, offspring_ratio=0.5):
+    def __init__(self, pop_size, param_limits, offspring_ratio=0.5, mutate_prob = 0.1, mutation_type = 'uniform'):
         """
 
         Parameters
@@ -18,15 +18,8 @@ class Population():
         param_limits: dict
             Dictionary with the upper and lower value of the model parameters
         """
-        self.generation = 0
-        self._pop_size = pop_size
-        self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
-        self.number_offsprings = int(pop_size * offspring_ratio) # each set of 2 parents creates 2 childs
-        self._parameters_to_fit = param_limits.keys()
-
-
-        # Different possibilities for selection, crossover and mutation algorithms to be used
+         # Different possibilities for selection, crossover and mutation algorithms to be used
         self._selection_mapping = { 
                             'roulette': roulette_wheel
                             'tournament': tournament_selection
@@ -42,6 +35,17 @@ class Population():
         }
 
 
+        self._value_limits = param_limits
+        self.mutation_prob = mutate_prob
+        self.generation = 0
+        self._pop_size = pop_size
+        self._population = [Individual(param_values =  param_limits, gen_date=0, mutate_prob=mutate_prob) for _ in range(pop_size)]
+
+        self.number_offsprings = int(pop_size * offspring_ratio) # each set of 2 parents creates 2 childs
+        self._parameters_to_fit = param_limits.keys()
+
+
+       
     def get_population(self):
         return self._population
       
@@ -81,6 +85,7 @@ class Population():
         """
         self.generation += 1
 
+
         selection_type = kwargs['selection_type']
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
@@ -91,6 +96,7 @@ class Population():
                                                                 **kwargs
                                                                 )
 
+        # Select the members to maintain to next generation
         number_to_keep = self._pop_size - self.number_offsprings
         if kwargs['reinsertion_type'] == 'age':
             if self.generation == 1:
@@ -100,15 +106,17 @@ class Population():
         elif kwargs['reinsertion_type'] == 'fit';
             new_gen = fittest_individuals(self._population, number_to_keep)
 
-        # implement interface for modelling the addition of the new offspring
-        # e.g. steady state model (children replace the parent's place, if tey have higher fitness)
-        # generational: change 
-        for parent_pair in selected_pairs: 
-            children_1, children_2 = self._crossover_mapping[crossover](parent_list = parent_pair, 
-                                                                        **kwargs)
 
-            new_generation.append(children_1)
-            new_generation.append(children_2)
+
+        # create the offspring and see if they will mutate
+        for parent_pair in selected_pairs: 
+            children = self._crossover_mapping[crossover](parent_list = parent_pair, 
+                                                                        generation = self.generation
+                                                                        **kwargs) 
+            for individual in children:   
+                if np.random.random(size = 1)[0] < self.mutation_prob:  # trigger mutation with given probability ?
+                    individual.mutate_genes(individual, self._value_limits)
+                    new_generation.append(individual)
 
     def print_current_gen(self):
         """
