@@ -1,4 +1,4 @@
-# rues - real valued genetich algorithms in python 
+# rues - real valued genetic algorithms in python 
 
 ## What is it ?
 
