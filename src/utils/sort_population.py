@@ -1,9 +1,9 @@
-from numpy import argsort
+from numpy import argsort, asarray
 
-def sorted_population(sort_type):
+def sorted_population(population, sort_type):
 
-    values_inds = [i.getattr(sort_type) for i in self._population]
+    values_inds = [i.getattr(sort_type) for i in population]
 
     indexes = argsort(values_inds)
 
-    return self._population[indexes]
+    return asarray(population)[indexes]
