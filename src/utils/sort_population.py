@@ -6,4 +6,4 @@ def sorted_population(population, sort_type):
 
     indexes = argsort(values_inds)
 
-    return asarray(population)[indexes]
+    return list([population[index] for index in indexes])
