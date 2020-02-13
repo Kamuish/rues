@@ -90,8 +90,6 @@ class Population():
 
         self._process_handler.run_population(self._population) # compute the fitness of current 
         
-        print(self._population)
-        input()
         # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings,
@@ -105,6 +103,7 @@ class Population():
                 new_gen = fittest_individuals(self._population, number_to_keep)
             else:
                 new_gen = age_based_selection(self._population, number_to_keep)
+
         elif kwargs['reinsertion_type'] == 'fit':
             new_gen = fittest_individuals(self._population, number_to_keep)
 
@@ -113,12 +112,14 @@ class Population():
         # create the offspring and see if they will mutate
         for parent_pair in selected_pairs: 
             children = self._crossover_mapping[crossover](parent_list = parent_pair, 
-                                                                        generation = self.generation
+                                                                        generation = self.generation,
                                                                         **kwargs) 
             for individual in children:   
                 if np.random.random(size = 1)[0] < self.mutation_prob:  # trigger mutation with given probability ?
-                    individual.mutate_genes(individual, self._value_limits)
-                    new_generation.append(individual)
+                    mutated_genes = self._mutation_mapping[mutation](individual, self._value_limits)
+                    individual.mutate_genes(mutated_genes)
+                new_gen.append(individual)
+        self._population = new_gen
 
     def print_current_gen(self):
         """
