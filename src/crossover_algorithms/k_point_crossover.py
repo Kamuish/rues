@@ -3,7 +3,7 @@ from src.Individual import Individual
 import numpy as np 
 
 
-def k_point_crossover(parent_list, **kwargs):
+def k_point_crossover(parent_list, generation,  **kwargs):
     """
         Does the k_point crossover operator over the two parents, allowing to create the new individual
 
@@ -52,5 +52,9 @@ def k_point_crossover(parent_list, **kwargs):
             flag *= -1    # switches between both parents 
             current_pointer = current_pointer +  1 if current_pointer < k -1 else current_pointer # updates the pointer
 
+    child_1 = Individual(param_values = children_1_params,
+                        gen_date = generation)
 
-    return children_1_params, children_2_params
+    child_2 = Individual(param_values = children_2_params,
+                        gen_date = generation)                   
+    return [child_1, child_2]
