@@ -48,6 +48,10 @@ class Individual():
         return self._score
 
     @property
+    def creation_age(self):
+        return self._generation_creation
+        
+    @property
     def parameters(self):
         return self._param_vector
 
