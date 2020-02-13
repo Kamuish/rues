@@ -5,7 +5,7 @@ import numpy as np
 class Individual():
     pop_tracker = 0
 
-    def __init__(self, param_values, gen_date, mutate_prob = 0.1):
+    def __init__(self, param_values, gen_date):
         """
             Individual class, part of the species that will fit our problem
 
@@ -26,7 +26,7 @@ class Individual():
         self.ID = self.__class__.pop_tracker
         self.__class__.pop_tracker += 1
         self._param_vector = {}
-        self._mutate_prob = 0.1
+
 
         # if True then it will be used as one of the parents
         self.parent = False   
@@ -34,13 +34,14 @@ class Individual():
 
         # create Individual with parameters random within the region space
         if gen_date == 0:
+        
             for key, value in param_values.items():
                 self._param_vector[key] = np.random.uniform(*value, size = 1)[0]
         else:
             self._param_vector = param_values
 
+
     def mutate_genes(self, new_params):
-       
         self._param_vector = new_params
 
     @property
