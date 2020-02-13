@@ -41,7 +41,8 @@ def k_point_crossover(parent_list, generation,  **kwargs):
 
     if k >= number_params:
         raise ValueError("Crossover points equal to number of parameters")
-    switching_points = np.sort(np.random.randint(1, len(params_1) - 1, size = k))
+
+    switching_points = np.sort(np.random.randint(0, len(params_1) - 1, size = k))
 
 
     for param_index, key in enumerate(params_1.keys()):
