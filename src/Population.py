@@ -3,11 +3,11 @@ from src.selection_algorithms import roulette_wheel, stochastic_uni_sampling, to
 from src.crossover_algorithms import k_point_crossover 
 from src.mutation_algorithms import uniform_mutator
 from src.reinsertion_algorithms import age_based_selection, fittest_individuals
-
+from src.utils import multiproc_handler
 import numpy as np
 
 class Population():
-    def __init__(self, pop_size, param_limits, offspring_ratio=0.5, mutate_prob = 0.1, mutation_type = 'uniform'):
+    def __init__(self, pop_size, param_limits, **kwargs):
         """
 
         Parameters
@@ -36,15 +36,15 @@ class Population():
 
 
         self._value_limits = param_limits
-        self.mutation_prob = mutate_prob
+        self.mutation_prob = kwargs['mutate_prob']
         self.generation = 0
         self._pop_size = pop_size
-        self._population = [Individual(param_values =  param_limits, gen_date=0, mutate_prob=mutate_prob) for _ in range(pop_size)]
+        self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
-        self.number_offsprings = int(pop_size * offspring_ratio) # each set of 2 parents creates 2 childs
+        self.number_offsprings = int(pop_size * kwargs['offspring_ratio']) # each set of 2 parents creates 2 childs
         self._parameters_to_fit = param_limits.keys()
 
-
+        self._process_handler = multiproc_handler(**kwargs)
        
     def get_population(self):
         return self._population
