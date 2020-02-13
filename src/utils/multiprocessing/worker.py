@@ -1,7 +1,7 @@
 
 from multiprocessing import Queue
 
-def worker(in_queue, out_queue, **kwargs):
+def worker(in_queue, out_queue, keep_alive, **kwargs):
     """ 
     Parameters
     ------------
@@ -11,10 +11,10 @@ def worker(in_queue, out_queue, **kwargs):
 
     """
 
-    try:  # allow to run a function before the 'fit_func' starts being used over all of the individuals of the population
+    if kwargs['initial_setup'] is not None:  # allow to run a function before the 'fit_func' starts being used over all of the individuals of the population
         initial_configuration = kwargs['initial_setup']
         configuration_init = initial_configuration(**kwargs)
-    except KeyError as e:
+    else:
         configuration_init = None 
 
     fitness_function = kwargs['fit_func']
@@ -22,7 +22,7 @@ def worker(in_queue, out_queue, **kwargs):
     calculated_fitness = {}   # dictionary to store fitness values; keys -> ID of the individual; values -> fit level
 
     while True:
-        if not in_queue.empty() or kwargs['keep_alive']:  # still have elements in the input queue or worker is supposed to stya alive  
+        if not in_queue.empty() or keep_alive  # still have elements in the input queue or worker is supposed to stya alive  
             population = in_queue.get()
         else:
             return 

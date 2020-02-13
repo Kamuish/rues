@@ -44,7 +44,7 @@ class multiproc_handler():
 
         if not self.keep_alive or len(self.processes) == 0:  # either always creates the processes (if not keep_alive) or creates them for the first time
             for k in range(self.nproc): # create all of the processes
-                process = Process(target=worker, args = (tasks_queue, results_queue), kwargs=kwargs)
+                process = Process(target=worker, args = (tasks_queue, results_queue, self.keep_alive), kwargs=kwargs)
                 process.start()
 
                 if self.keep_alive:
