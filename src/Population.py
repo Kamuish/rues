@@ -49,27 +49,6 @@ class Population():
     def get_population(self):
         return self._population
       
-    def _run_fitness_computation(self, fitness_func, **kwargs):
-        """
-        Computes the score of each individual, to prepare for next generation
-
-        Parameters
-        ----------------
-        fitness_func:
-            function to calculate the score of each element
-        kwargs: dict 
-            Configuration dictionary; should have some values defines:
-                - fit_func: function to calculate fitness of individual
-                - init_setup: initial setup function, if needed, else None
-                - all other worker specific kwargs, for the fit_func and init_setup
-        """
-        
-        configuration_dict = {
-                            'fit_func': fitness_func,
-                            'init_setup': initial_setup
-        }
-        configuration_dict = { **configuration_dict, **kwargs}
-
 
     def crossover(self, **kwargs):
         """
@@ -93,25 +72,29 @@ class Population():
                     - age
                     - fitness
             worker_params: dict
-                dictionary with the kwargs that will be passed to the initial setup function and the fitness function
+                Configuration dictionary; should have some values defines:
+                    - fit_func: function to calculate fitness of individual
+                    - init_setup: initial setup function, if needed, else None
+                    - all other worker specific kwargs, for the fit_func and init_setup
         """
 
         if self.generation == 0:  # set the configuration arguments for the initial setup and fitness functions
-            self._process_handler.set_configuration(**kwargs)
+            self._process_handler.set_configuration(**kwargs['worker_params'])
         self.generation += 1
-
 
         selection_type = kwargs['selection_type']
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
 
-        self._run_fitness_computation() 
+        self._process_handler.run_population(self._population) # compute the fitness of current 
+        
+        # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings
                                                                 **kwargs
                                                                 )
 
-        # Select the members to maintain to next generation
+        # Select the members to maintain to next generation and find individuals to be reinserted
         number_to_keep = self._pop_size - self.number_offsprings
         if kwargs['reinsertion_type'] == 'age':
             if self.generation == 1:
