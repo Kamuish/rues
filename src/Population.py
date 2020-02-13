@@ -2,6 +2,7 @@ from Individual import Individual
 from src.selection_algorithms import roulette_wheel, stochastic_uni_sampling, tournament_selection
 from src.crossover_algorithms import k_point_crossover 
 from src.mutation_algorithms import uniform_mutator
+from src.reinsertion_algorithms import age_based_selection, fittest_individuals
 
 import numpy as np
 
@@ -17,11 +18,8 @@ class Population():
         param_limits: dict
             Dictionary with the upper and lower value of the model parameters
         """
-
-        if offspring_ratio != 0.5 and offspring_ratio != 1:
-            raise ValueError("Currently we either support half-population crossover or full-population crossover")
-
         self.generation = 0
+        self._pop_size = pop_size
         self._population = [Individual(param_values =  param_limits, gen_date=0) for _ in range(pop_size)]
 
         self.number_offsprings = int(pop_size * offspring_ratio) # each set of 2 parents creates 2 childs
@@ -74,6 +72,12 @@ class Population():
             crossover_type: str
                 ALgorithm to perform the crossover:
                     K_point: K point crossover algorithm. If one chooses this algorithm, also set the K_value to the desired number of switching points
+            mutation_type
+                Algorithm for the mutation 
+            reinsertion_type:
+                Algorithm for reinsertion 
+                    - age
+                    - fitness
         """
         self.generation += 1
 
@@ -86,10 +90,19 @@ class Population():
                                                                 offspring_number = self.number_offsprings
                                                                 **kwargs
                                                                 )
-        new_generation = list(zip(*selected_pairs))
 
-        # take intoaccount that we can select less parents, and then have to choose to keep some elements that are not parents (why would we do this?)
-        # For now ignore this problem and only accept half/full population crossover
+        number_to_keep = self._pop_size - self.number_offsprings
+        if kwargs['reinsertion_type'] == 'age':
+            if self.generation == 1:
+                new_gen = fittest_individuals(self._population, number_to_keep)
+            else:
+                new_gen = age_based_selection(self._population, number_to_keep)
+        elif kwargs['reinsertion_type'] == 'fit';
+            new_gen = fittest_individuals(self._population, number_to_keep)
+
+        # implement interface for modelling the addition of the new offspring
+        # e.g. steady state model (children replace the parent's place, if tey have higher fitness)
+        # generational: change 
         for parent_pair in selected_pairs: 
             children_1, children_2 = self._crossover_mapping[crossover](parent_list = parent_pair, 
                                                                         **kwargs)
@@ -136,6 +149,10 @@ class Population():
                 parameter_dict[param].append(individ.parameters[param])
         return parameter_dict
 
+
+    @property
+    def all_IDS(self):
+        return list([i.ID for i in self._population])
 
 if __name__ == '__main__':
     a = Population(5, param_limits = {'a':[0,1], 'b':[2,3]})
