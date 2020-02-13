@@ -12,17 +12,29 @@ class Genetic():
         pop_size: int
             size of the population
         param_limits: dict
-            Dictionary with the upper and lower value of the model parameters
+            Dictionary with the upper and lower value of the model 
+        config_dict: dict 
+            Dictionary with some configuration Parameters:
+                - offspring ratio - % of population that is going to reproduce
+                - mutate_prob  - probability of an individual mutating, when created (the zeroth generation cannot mutate)
+                - processes -  the number of processes that will be used to run the fitness functions 
+                - keep_alive - should the processes stay alive after calculating all of the fitness for a given generation? (ideally set to True)
         """
-        self._population = Population(pop_size, param_limits) 
+
+        self._population = Population( pop_size = pop_size,
+                                       param_limits =  param_limits,
+                                       kwargs = **config_dict
+                                       ) 
         self._completed_fit = False
         self._config_dict = config_dict
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, max_iterations):
         """
         Run the genetic algorithm to find the best parameters for the orbit
         """
-        pass
+
+        for k in range(max_iterations):
+            self._population.crossover(**self._config_dict)
         self._completed_fit = True 
 
 
@@ -39,7 +51,7 @@ class Genetic():
             Dictionary with sets inside (median value, median - 16th percentile, 84th percentile - median)
         """
         if not self._completed_fit:
-            raise Exception("Genetic algorithm fit is yet to be used;")
+            raise Exception("Genetic algorithm fit is yet to train;")
         
         param_dict = self._population.get_population_parameters()
 
