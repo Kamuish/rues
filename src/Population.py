@@ -85,7 +85,7 @@ class Population():
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
 
-
+        self._run_fitness_computation() 
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings
                                                                 **kwargs
