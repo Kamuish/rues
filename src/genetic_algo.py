@@ -58,7 +58,7 @@ class Genetic():
         output = {}
 
         for parameter, values in param_dict.items():
-            percentiles = np.sqrt(np.nanpercentile(vararr, [16, 50, 84])) / np.sqrt(norm)
+            percentiles = np.sqrt(np.nanpercentile(values, [16, 50, 84]))
             output[parameter] =  (percentiles[1], percentiles[1] - percentiles[0], percentiles[2] - percentiles[1] )
 
         return output
