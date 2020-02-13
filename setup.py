@@ -4,10 +4,10 @@ from setuptools import find_packages
 import os 
 
 DOCLINES = (__doc__ or '').split("\n")
-setup(name='rails',
+setup(name='rues',
       version='0.1',
-      description='rails - genetic algorithms in python',
-      url='http://github.com/Kamuish/GeneticAlgo',
+      description='rues - genetic algorithms in python',
+      url='http://github.com/Kamuish/rues',
       author='Kamuish',
       long_description="\n".join(DOCLINES),
       author_email='amiguel@astro.up.pt',
