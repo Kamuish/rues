@@ -49,7 +49,7 @@ class Population():
     def get_population(self):
         return self._population
       
-    def _run_fitness_computation(self, fitness_func):
+    def _run_fitness_computation(self, fitness_func, **kwargs):
         """
         Computes the score of each individual, to prepare for next generation
 
@@ -57,9 +57,19 @@ class Population():
         ----------------
         fitness_func:
             function to calculate the score of each element
-
+        kwargs: dict 
+            Configuration dictionary; should have some values defines:
+                - fit_func: function to calculate fitness of individual
+                - init_setup: initial setup function, if needed, else None
+                - all other worker specific kwargs, for the fit_func and init_setup
         """
-        return []
+        
+        configuration_dict = {
+                            'fit_func': fitness_func,
+                            'init_setup': initial_setup
+        }
+        configuration_dict = { **configuration_dict, **kwargs}
+
 
     def crossover(self, **kwargs):
         """
@@ -82,7 +92,12 @@ class Population():
                 Algorithm for reinsertion 
                     - age
                     - fitness
+            worker_params: dict
+                dictionary with the kwargs that will be passed to the initial setup function and the fitness function
         """
+
+        if self.generation == 0:  # set the configuration arguments for the initial setup and fitness functions
+            self._process_handler.set_configuration(**kwargs)
         self.generation += 1
 
 
