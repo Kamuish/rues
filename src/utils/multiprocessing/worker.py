@@ -30,10 +30,12 @@ def worker(in_queue, out_queue, keep_alive, **kwargs):
         for individual in population:
             ID = individual.ID
             parameters = individual.parameters
-
-            fit_level = fitness_function(parameters = parameters,
+            if individual.score is None:
+                fit_level = fitness_function(parameters = parameters,
                                         initial_config = configuration_init,
                                         **kwargs)
+            else:
+                fit_level = individual.score
             calculated_fitness[ID] = fit_level
             
         out_queue.put(calculated_fitness)
