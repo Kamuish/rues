@@ -19,7 +19,7 @@ class multiproc_handler():
         self.config_dict = config_dict
 
         
-    def run_population(self, population):
+    def run_population(self, population, X,Y):
         """
         runs the fitness function over the input population. If the workers are set to be kept alive, then the background processes will be alive 
         until the code ends
@@ -27,6 +27,7 @@ class multiproc_handler():
         """
 
         kwargs = self.config_dict
+        blocks = self.nproc*4 if len(population)/(self.nproc * 4 ) > 2 else self.nproc
         blocks = np.array_split(population, self.nproc)
         number_blocks = len(blocks)
 
@@ -45,7 +46,7 @@ class multiproc_handler():
 
         if not self.keep_alive or len(self.processes) == 0:  # either always creates the processes (if not keep_alive) or creates them for the first time
             for k in range(self.nproc): # create all of the processes
-                process = Process(target=worker, args = (tasks_queue, results_queue, self.keep_alive), kwargs=kwargs)
+                process = Process(target=worker, args = (tasks_queue, results_queue, self.keep_alive, X, Y), kwargs=kwargs)
                 process.start()
 
                 if self.keep_alive:
