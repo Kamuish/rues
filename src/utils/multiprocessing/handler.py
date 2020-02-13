@@ -15,12 +15,17 @@ class multiproc_handler():
 
         self.processes  = [] 
 
-    def run_population(self, population, **kwargs):
+    def set_configuration(self, config_dict):
+        self.config_dict = config_dict
+
+        
+    def run_population(self, population):
         """
         runs the fitness function over the input population. If the workers are set to be kept alive, then the background processes will be alive 
         until the code ends
 
         """
+        kwargs = self.config_dict
         blocks = np.array_split(population, self.nproc)
         number_blocks = len(blocks)
 
