@@ -11,12 +11,9 @@ def uniform_mutator(individual, value_ranges):
 
     parameters = individual.parameters
 
-    child_params = parameters.copy() 
 
-
-    for key in child_params.keys():
+    for key in parameters.keys():
         if np.random.randint(0,2) :
-            print(f"{key} going to mutate")
-            child_params[key] = np.random.uniform(*value_ranges[key], size = 1)[0]
+            parameters[key] = np.random.uniform(*value_ranges[key], size = 1)[0]
 
-    return child_params
+    return parameters
