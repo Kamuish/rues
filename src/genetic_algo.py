@@ -23,7 +23,7 @@ class Genetic():
 
         self._population = Population( pop_size = pop_size,
                                        param_limits =  param_limits,
-                                       kwargs = **config_dict
+                                       **config_dict
                                        ) 
         self._completed_fit = False
         self._config_dict = config_dict
