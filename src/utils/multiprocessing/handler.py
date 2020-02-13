@@ -25,6 +25,7 @@ class multiproc_handler():
         until the code ends
 
         """
+
         kwargs = self.config_dict
         blocks = np.array_split(population, self.nproc)
         number_blocks = len(blocks)
@@ -57,13 +58,13 @@ class multiproc_handler():
             outputs_complete = {**outputs_complete, **output} # merging to final dict
             number_responses += 1
 
+        for individual in population:
+            individual.score = outputs_complete[individual.ID]
         return outputs_complete
     
-    def close(self):
-        self.__del__()
 
     def __del__(self):
-        if self.keep_alive:
+        if self.keep_alive and self.tasks_queue is not None:
             self.tasks_queue.close()
             self.results_queue.close()
 
