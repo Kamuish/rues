@@ -85,16 +85,12 @@ class Population():
         if self.generation == 0:  # set the configuration arguments for the initial setup and fitness functions
             self._process_handler.set_configuration(kwargs['worker_params'])
             
-            if kwargs['crossover_type'] == 'blend': # blend crossover only gives one child from two parents (half of the 'normal') algorithm
-                self.number_offsprings *= 2
-
         self.generation += 1
         selection_type = kwargs['selection_type']
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
 
-        self._process_handler.run_population(self._population, X, Y) # compute the fitness of current 
-
+        self.calculate_fitness(X, Y)
         # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings,
@@ -103,6 +99,7 @@ class Population():
 
         # Select the members to maintain to next generation and find individuals to be reinserted
         number_to_keep = self._pop_size - self.number_offsprings
+
 
         if number_to_keep != 0:
             if kwargs['reinsertion_type'] == 'age':
@@ -116,19 +113,22 @@ class Population():
         else:
             new_gen = []
 
-
         # create the offspring and see if they will mutate
         for parent_pair in selected_pairs: 
             children = self._crossover_mapping[crossover](parent_list = parent_pair, 
                                                                         generation = self.generation,
+                                                                        value_limits = self._value_limits,
                                                                         **kwargs) 
             for individual in children:   
                 if np.random.random(size = 1)[0] < self.mutation_prob:  # trigger mutation with given probability ?
                     mutated_genes = self._mutation_mapping[mutation](individual, self._value_limits)
+
                     individual.mutate_genes(mutated_genes)
                 new_gen.append(individual)
         self._population = new_gen
 
+    def calculate_fitness(self, X, Y):
+        self._process_handler.run_population(self._population, X, Y) # compute the fitness of current 
     def print_current_gen(self):
         """
         Print all of the individuals of the current generation
@@ -172,7 +172,9 @@ class Population():
     @property
     def all_IDS(self):
         return list([i.ID for i in self._population])
-
+    @property
+    def size(self):
+        return self._pop_size
 if __name__ == '__main__':
     a = Population(5, param_limits = {'a':[0,1], 'b':[2,3]})
 
