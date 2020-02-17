@@ -8,6 +8,9 @@ def stochastic_uni_sampling(population, offspring_number, **kwargs):
         There is no need to start from the beginning of the population for each pointer
         However, there seems to be no significant delay associated with this process.
     """
+    if kwargs['crossover_type'] == 'blend': # blend crossover only gives one child from two parents (half of the 'normal') algorithm
+        offspring_number *= 2
+
     fitness_sum = np.sum([ind.score for ind in population])
 
     # create pointer array to sample population

@@ -5,6 +5,8 @@ def tournament_selection(population, offspring_number, **kwargs):
     tournament_size = kwargs['tourn_size']
 
     selected_elements = []
+    if kwargs['crossover_type'] == 'blend': # blend crossover only gives one child from two parents (half of the 'normal') algorithm
+        offspring_number *= 2
 
     for numb in range(offspring_number):
         chosen_elements = np.random.choice(population, tournament_size)

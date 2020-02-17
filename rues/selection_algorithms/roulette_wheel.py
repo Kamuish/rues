@@ -7,6 +7,8 @@ def roulette_wheel(population, offspring_number, **kwargs):
     Roulette wheel selection
 
     """
+    if kwargs['crossover_type'] == 'blend': # blend crossover only gives one child from two parents (half of the 'normal') algorithm
+        offspring_number *= 2
 
     fitness_sum = np.sum([ind.score for ind in population])
     chosen_elemts = []
