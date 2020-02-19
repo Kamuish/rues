@@ -6,6 +6,7 @@ import os
 DOCLINES = (__doc__ or '').split("\n")
 setup(name='rues',
       version='0.1',
+      python_requires='>=3.6',
       description='rues - genetic algorithms in python',
       url='http://github.com/Kamuish/rues',
       author='Kamuish',
