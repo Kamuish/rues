@@ -48,18 +48,20 @@ class Genetic():
         self._completed_fit = True 
 
 
-    def get_optimal_params(self):
+    def get_sorted_population(self):
         """
-            Returns the best value for our problem
-
-            Taken and the median of the entire final population +84th percentile -16th percentile
-
-            I.e. build a 68% confidence interval around the fitted value
-
+        Returns the sorted population
         Returns
         --------
             Dictionary with sets inside (median value, median - 16th percentile, 84th percentile - median)
         """
+        if not self._completed_fit:
+            raise Exception("Genetic algorithm fit is yet to train;")
+        
+        return sorted_population(self._population.get_population(), 'score')
+
+
+    def create_corner(self):
         if not self._completed_fit:
             raise Exception("Genetic algorithm fit is yet to train;")
         
