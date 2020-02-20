@@ -1,5 +1,8 @@
 import numpy as np 
 from .Population import Population
+from rues.utils import sorted_population
+import corner 
+import matplotlib.pyplot as plt 
 
 class Genetic():
     def __init__(self, pop_size, param_limits, config_dict):
@@ -31,12 +34,17 @@ class Genetic():
     def fit(self, X, Y, max_iterations):
         """
         Run the genetic algorithm to find the best parameters for the orbit
+        print(self._population.print_current_gen())
         """
+        
         for k in range(max_iterations):
             self._population.crossover(X, Y, **self._config_dict)
 
             if k % 100 == 0:
                 print(f"Here we are: {k}")
+
+        
+        self._population.calculate_fitness(X,Y) # calculate fitness for last population
         self._completed_fit = True 
 
 
@@ -59,10 +67,32 @@ class Genetic():
 
         output = {}
 
+        fits = [i.score for i in self._population.get_population()]
+
+        print(self._population.get_population()[fits.index(max(fits))])
+
+        #print(sorted_population(self._population.get_population(), 'score')[::-1])
+
+        plt.figure()
+        plt.hist(fits)
+        plt.title("Score distribution")
+        plt.show()
+
+        nsamples = self._population.size
+        param_numb = len(param_dict.keys())
+        all_values = []
         for parameter, values in param_dict.items():
             percentiles = np.percentile(values, [25, 50, 75])
+            all_values.append(np.broadcast_to(np.asarray(values),(1,nsamples)))
 
-            print(percentiles[0], percentiles[2])
             output[parameter] =  (percentiles[1], percentiles[1] - percentiles[0], percentiles[2] - percentiles[1] )
+        
+        corners = np.vstack(all_values).T
 
+        print(corners.shape, len(all_values))
+        figure = corner.corner(corners,
+                        labels = list(param_dict.keys()),
+                       quantiles=[0.25, 0.5, 0.75],
+                       show_titles=True, title_kwargs={"fontsize": 12})
+        plt.show()
         return output
