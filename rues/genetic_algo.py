@@ -41,16 +41,16 @@ class Genetic():
             self._population.crossover(X, Y, **self._config_dict)
 
             if k % 100 == 0:
-                print(f"Here we are: {k}")
+                print(f"Generation number: {k}")
 
         
-        self._population.calculate_fitness(X,Y) # calculate fitness for last population
+        self._population.calculate_fitness(X,Y, kill_workers = True) # calculate fitness for last population
         self._completed_fit = True 
 
 
     def get_sorted_population(self):
         """
-        Returns the sorted population
+        Returns the entire sorted (from lowest to highest) population (by fitness). 
         Returns
         --------
             Dictionary with sets inside (median value, median - 16th percentile, 84th percentile - median)
@@ -60,6 +60,11 @@ class Genetic():
         
         return sorted_population(self._population.get_population(), 'score')
 
+    def get_optimal_params(self):
+        """
+            Returns the individual with the highest fitness level
+        """
+        return sorted_population(self._population.get_population(), 'score')[-1].parameters
 
     def create_corner(self):
         if not self._completed_fit:
@@ -70,15 +75,6 @@ class Genetic():
         output = {}
 
         fits = [i.score for i in self._population.get_population()]
-
-        print(self._population.get_population()[fits.index(max(fits))])
-
-        #print(sorted_population(self._population.get_population(), 'score')[::-1])
-
-        plt.figure()
-        plt.hist(fits)
-        plt.title("Score distribution")
-        plt.show()
 
         nsamples = self._population.size
         param_numb = len(param_dict.keys())
@@ -91,10 +87,9 @@ class Genetic():
         
         corners = np.vstack(all_values).T
 
-        print(corners.shape, len(all_values))
         figure = corner.corner(corners,
                         labels = list(param_dict.keys()),
-                       quantiles=[0.25, 0.5, 0.75],
+                       quantiles=[0.25, 0.75],
                        show_titles=True, title_kwargs={"fontsize": 12})
         plt.show()
         return output
