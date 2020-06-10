@@ -1,7 +1,7 @@
 alabaster==0.7.12
 Babel==2.8.0
 batman-package==2.4.6
-bleach==3.1.0
+bleach==3.1.4
 certifi==2019.11.28
 cffi==1.14.0
 chardet==3.0.4
