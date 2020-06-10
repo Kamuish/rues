@@ -90,7 +90,7 @@ class Population():
         crossover =  kwargs['crossover_type']
         mutation = kwargs['mutation_type']
 
-        self.calculate_fitness(X, Y)
+        self.calculate_fitness(X, Y, kill_workers = False)
         # select the parents
         selected_pairs = self._selection_mapping[selection_type](population = self._population,
                                                                 offspring_number = self.number_offsprings,
@@ -127,8 +127,9 @@ class Population():
                 new_gen.append(individual)
         self._population = new_gen
 
-    def calculate_fitness(self, X, Y):
-        self._process_handler.run_population(self._population, X, Y) # compute the fitness of current 
+    def calculate_fitness(self, X, Y, kill_workers):
+        self._process_handler.run_population(self._population, X, Y, kill_workers) # compute the fitness of current 
+
     def print_current_gen(self):
         """
         Print all of the individuals of the current generation
