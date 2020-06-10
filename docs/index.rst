@@ -13,12 +13,11 @@ Welcome to rues's documentation!
     	
 		What are Genetic Algorithms <user_guide/GA_intro>
 		What is rues <user_guide/intro>
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Examples
-    
+    How to use rues <user_guide/interface>
     Simple sinusoidal fit <tutorials/simple_example>
+    Fitting a Light Curve <tutorials/complex_example>
+
+
 Indices and tables
 ==================
 
