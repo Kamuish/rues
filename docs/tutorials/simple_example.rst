@@ -1,3 +1,5 @@
+.. _SinFit:
+
 Sinusoidal fit
 ================================
 
@@ -69,17 +71,53 @@ Lastly, we only have to decide on the population size and the limits of the para
 
     from rues import  Genetic
 
-    a = Genetic(100, {'amplitude':[0,6], 'phase':[0, np.pi*2]}, configuration_dict)
-    a.fit(X = x, Y = y_noisy, max_iterations =  200)
+    population = Genetic(100, {'amplitude':[0,6], 'phase':[0, np.pi*2]}, configuration_dict)
+    population.fit(X = x, Y = y_noisy, max_iterations =  200)
 
-    optimal_params = a.get_optimal_params()
+    optimal_params = population.get_optimal_params()  # returns the individual with the highest fitness level
 
-    print("OPTIMAL PARAMETERS: ", a.get_optimal_params())
+    print("OPTIMAL PARAMETERS: ", optimal_params)
+    # {'amplitude': 4.06042435186686, 'phase': 0.7854295918011562}
     print("True parameters: ", 4, np.pi/4)
     
-    y_model = model(optimal_params['amplitude'][0], optimal_params['phase'][0], x)
+    y_model = model(optimal_params['amplitude'], optimal_params['phase'], x)
 
-    plt.plot(x, y_noise_free, color = 'black', label = 'input w/ noise')
-    plt.plot(x, y_noisy, color = 'blue', label = 'input with noise')
-    plt.plot(x, y_model, color = 'red', label = 'model')
+
+We can plot the results of the fit: 
+
+
+.. code-block:: python
+	
+
+    import matplotlib.pyplot as plt 
+    plt.style.use("seaborn-dark")
+
+    fig, ax = plt.subplots(2,1, figsize=(8,4), sharex = True)
+    ax[0].set_title("Final Fit")
+    ax[0].plot(x, y_noise_free, color = 'black', label = 'input w/ noise')
+    ax[0].plot(x, y_noisy, color = 'blue', label = 'input with noise')
+    ax[0].plot(x, y_model, color = 'red', label = 'model')
+
+    ax[1].set_title("Residuals")
+    ax[1].plot(x, y_noisy-y_model, label = 'residuals')
+    
+    plt.tight_layout()
+    ax[0].legend(bbox_to_anchor = (0.4,0.78), ncol = 3)
+
+    ax[0].set_ylabel("Data")
+    ax[1].set_ylabel("Residual level")
     plt.show()
+
+.. figure:: ../Figures/simple_output.png
+
+And also look at the distribution of all elements in the final population (in the diagonals) and search for correlation between the parameters (in the other plots):
+
+.. code-block:: python 
+	
+	population.create_corner()
+
+
+.. figure:: ../Figures/simple_corner.png
+
+
+The red line shows the parameters of the individual with the highest fitness level. When using a small population, such as in this case with only 200 individuals, the non-diagonal plots will not behave properly and it is not possible to see the contour of the distributions.
