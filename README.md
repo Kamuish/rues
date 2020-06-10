@@ -18,4 +18,4 @@ SO far it was only tested with python3.6+, but it should work on older versions,
 
 ## How to use
 
-Further documentation will eventually appear, but for now refer to the rues_example.py file, where the library is showcased
+All documentation is available at https://rues.readthedocs.io/en/latest/
