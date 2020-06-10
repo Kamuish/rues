@@ -19,7 +19,7 @@ class multiproc_handler():
         self.config_dict = config_dict
 
         
-    def run_population(self, population, X,Y):
+    def run_population(self, population, X,Y, kill_workers = False):
         """
         runs the fitness function over the input population. If the workers are set to be kept alive, then the background processes will be alive 
         until the code ends
@@ -59,8 +59,12 @@ class multiproc_handler():
             outputs_complete = {**outputs_complete, **output} # merging to final dict
             number_responses += 1
 
+        if kill_workers:
+            [tasks_queue.put([]) for i in  range(len(self.processes))]  # populate the task queue with all of the blocks
+
         for individual in population:
             individual.score = outputs_complete[individual.ID]
+        
         return outputs_complete
     
 
