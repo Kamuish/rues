@@ -65,7 +65,7 @@ class Individual():
 
     def __repr__(self):
         output_str = f"ID: {self.ID} {self._param_vector}"
-        added_info = '' if self._score is None else f" - {self._score}" 
+        added_info = '' if self._score is None else f" - fitness: {self._score}" 
         return output_str + added_info
 
 
