@@ -62,7 +62,7 @@ class Genetic():
 
     def get_optimal_params(self):
         """
-            Returns the individual with the highest fitness level
+            Returns the parameters of the individual with the highest fitness level
         """
         return sorted_population(self._population.get_population(), 'score')[-1].parameters
 
@@ -89,7 +89,16 @@ class Genetic():
 
         figure = corner.corner(corners,
                         labels = list(param_dict.keys()),
-                       quantiles=[0.25, 0.75],
-                       show_titles=True, title_kwargs={"fontsize": 12})
+                       quantiles=[],
+                       show_titles=False, title_kwargs={"fontsize": 12})
+        
+        axes = np.array(figure.axes).reshape((len(param_dict), len(param_dict)))
+
+        best_params = self.get_optimal_params()
+        # Loop over the diagonal
+        for i, key in enumerate(param_dict.keys()):
+            ax = axes[i, i]
+            ax.axvline(best_params[key], color="r", linestyle = '--')
+
         plt.show()
         return output
